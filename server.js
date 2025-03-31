@@ -1,11 +1,13 @@
 const express = require('express')
-const errorHandler = require('./middleware/errorHandler')
 const dotenv = require('dotenv').config()
-require('dotenv').config()
 const mongoose = require('mongoose')
+const errorHandler = require('./middleware/errorHandler')
+const contactRoutes = require('./routes/contactRoutes') // Import contact routes
 
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/contactmanager'
+const port = process.env.PORT || 5000
 
+// Connect to MongoDB
 mongoose
   .connect(mongoUri, {
     useNewUrlParser: true,
@@ -16,14 +18,18 @@ mongoose
 
 const app = express()
 
-const port = process.env.PORT || 5000
+// Middleware to parse JSON request bodies
+app.use(express.json())
 
+// Routes for contacts
+app.use('/api/contacts', contactRoutes)
+
+// Basic health check route
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello World!' })
+  res.status(200).json({ message: 'Contact Manager API is running...' })
 })
 
-app.use(express.json())
-app.use('/api/contacts', require('./routes/contactRoutes'))
+// Error handling middleware (should be the last app.use)
 app.use(errorHandler)
 
 app.listen(port, () => {

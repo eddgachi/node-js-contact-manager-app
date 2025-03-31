@@ -1,10 +1,9 @@
-// migrate-mongo-config.js
+const path = require('path')
 require('dotenv').config()
 
 const config = {
   mongodb: {
-    // Use the environment variable from your docker-compose (or fallback to localhost)
-    url: process.env.MONGO_URI || 'mongodb://mongodb:27017/contactmanager',
+    url: process.env.MONGO_MIGRATE_URI || 'mongodb://mongodb:27017/contactmanager',
     databaseName: 'contactmanager',
     options: {
       useNewUrlParser: true,
@@ -15,11 +14,11 @@ const config = {
   // Directory where migration scripts are stored
   migrationsDir: 'migrations',
 
-  // The file extension for the migration scripts
+  // File extension for migration files
   migrationFileExtension: '.js',
 
-  // A template for new migrations (optional)
-  // migrationFileTemplate: (filePath) => `// Migration: ${filePath}`,
+  // Explicitly set the migration template path to the default template provided by migrate-mongo
+  migrationTemplatePath: path.join(__dirname, 'node_modules', 'migrate-mongo', 'templates', 'migrationTemplate.js'),
 }
 
 module.exports = config
